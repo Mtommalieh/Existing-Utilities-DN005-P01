@@ -1,64 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-        <meta name="mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        
-        <!-- Link to CSS files -->
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/qgis2web.css">
-         <link rel="stylesheet" href="css/Blue Toggle.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
-        
-        <style>
-            html, body, #map {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                margin: 0;
-            }
-        </style>
-        <title>Map Viewer</title>
-    </head>
-    
-    <body>
-        <!-- Map container -->
-        <div id="map"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map with Custom Layers</title>
 
-        <!-- Link to JS files -->
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Location.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet-measure.js"></script>
-        
-        <!-- Link to data files -->
-        <script src="data/Projectboundriesproject_boundries_1.js"></script>
-        <script src="data/EHVCablesehv_cables_2.js"></script>
-        <script src="data/LVCableslv_cables_3.js"></script>
-        <script src="data/Servicecabinetsservice_cabinet_4.js"></script>
-        <script src="data/MVCablesmv_cables_5.js"></script>
-        
-        <!-- Your custom JS logic -->
-        <script>
-            var map = L.map('map', {
-                zoomControl: false, 
-                maxZoom: 28, 
-                minZoom: 1
-            }).fitBounds([[24.916722217488545, 51.07916008098172], [25.312101532182858, 51.9264408951489]]);
-            // Rest of the JS code...
-        </script>
-    </body>
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="css/leaflet.css" />
+    <link rel="stylesheet" href="css/L.Control.Layers.Tree.css" />
+    <link rel="stylesheet" href="css/qgis2web.css" />
+    <link rel="stylesheet" href="css/Blue Toggle.css" /> <!-- Your custom CSS -->
+    <link rel="stylesheet" href="css/fontawesome-all.min.css" />
+    <link rel="stylesheet" href="css/leaflet-measure.css" />
+
+    <style>
+        /* Basic styling for map */
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Include JS files -->
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Location.js"></script> <!-- Your custom JS -->
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="js/leaflet-measure.js"></script>
+
+    <!-- Data files for map layers (your custom data) -->
+    <script src="data/Projectboundriesproject_boundries_1.js"></script>
+    <script src="data/EHVCablesehv_cables_2.js"></script>
+    <script src="data/LVCableslv_cables_3.js"></script>
+    <script src="data/Servicecabinetsservice_cabinet_4.js"></script>
+    <script src="data/MVCablesmv_cables_5.js"></script>
+
+    <!-- Map Setup and Custom Logic -->
+    <script>
+        // Initialize the map
+        var map = L.map('map', {
+            zoomControl: false,
+            maxZoom: 28,
+            minZoom: 1
+        }).fitBounds([
+            [24.916722217488545, 51.07916008098172], 
+            [25.312101532182858, 51.9264408951489]
+        ]);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Example: Add a marker (location-based logic)
+        var location = new Location({lat: 25.0, lon: 51.5});  // Assuming Location.js provides this
+        location.addTo(map)
+            .bindPopup('Custom Location from Location.js')
+            .openPopup();
+
+        // Example of using Blue Toggle control (if you have this in Blue Toggle.css)
+        var toggleControl = L.control({position: 'topright'});
+        toggleControl.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'blue-toggle'); // Using a class from Blue Toggle CSS
+            div.innerHTML = 'Toggle Layers';
+            div.onclick = function() {
+                // Toggle logic for layers or something else
+                alert('Toggle clicked!');
+            };
+            return div;
+        };
+        toggleControl.addTo(map);
+
+        // Adding additional data layers (just an example)
+        var boundaryLayer = L.geoJSON(Projectboundriesproject_boundries_1).addTo(map); // Assuming your data is geojson
+        var cablesLayer = L.geoJSON(EHVCablesehv_cables_2).addTo(map);
+
+        // Example: Adding a measure control
+        L.control.measure({
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'sqkilometers'
+        }).addTo(map);
+
+        // Additional map controls, logic, etc.
+    </script>
+
+</body>
 </html>
