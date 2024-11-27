@@ -1,0 +1,11 @@
+/* style.css */
+
+.blue-toggle {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 1000; /* Keeps the toggle above the map */
+}
